@@ -1,12 +1,15 @@
 <template>
-	<view class="ruler-wrap">
-		<canvas 
-		:style="{'width': rWidth+'px', 'height': rHeight+'px'}" 
-		canvas-id="rulerCanvas" 
-		id="rulerCanvas"
-		@touchstart="onTouchStart"
-		@touchmove="onTouchMove"
-		@touchend="onTouchEnd"></canvas>		
+	<view class="">
+		<view class="cur-value">当前值：{{showValue}}</view>
+		<view class="ruler-wrap">
+			<canvas 
+			:style="{'width': rWidth+'px', 'height': rHeight+'px'}" 
+			canvas-id="rulerCanvas" 
+			id="rulerCanvas"
+			@touchstart="onTouchStart"
+			@touchmove="onTouchMove"
+			@touchend="onTouchEnd"></canvas>		
+		</view>
 	</view>
 </template>
 
@@ -45,7 +48,8 @@
 				end: 0,
 				startX: 0,
 				moveX: 0,
-				mainValue: 0
+				mainValue: 81,
+				showValue: 0
 			}
 		},
 		onLoad() {
@@ -55,8 +59,11 @@
 			initCtrl(){
 				this.rWidth = uni.upx2px(this.rulerWidth);
 				this.rHeight = uni.upx2px(this.rulerHeight);
+				this.showValue = this.mainValue;
+				this.drawRuler();
+			},
+			drawRuler(){
 				const context = uni.createCanvasContext('rulerCanvas');
-				
 				context.clearRect(0, 0, this.rWidth, this.rHeight); //每次更新画布之前先清除画布
 				this.drawMark(context);
 				this.drawRulerScale(context);
@@ -81,19 +88,19 @@
 				let scaleInterval = this.max - this.min;
 				let _markHeight = uni.upx2px(this.markHeight+10);
 				ctx.beginPath();
-				ctx.lineWidth = 0.1;
+				ctx.lineWidth = uni.upx2px(1);
 				ctx.strokeStyle = '#666666';
 				ctx.font = '2em 微软雅黑';
 				ctx.textAlign = 'center';
 				ctx.textBaseline = 'top';
-				let scalePerView = (this.rWidth-20)/this.step;
-				console.log('scalePerView::::',(this.rWidth-20),JSON.stringify(scalePerView))
-				for (let i = 0; i < scalePerView; i++) {
-					let posX = i*this.step + 10; //后面的10像素为做边距，距canvas左边10像素开始画
+				let scaleCountPerView = (this.rWidth-20)/this.step;
+				let scaleCountHalfView = scaleCountPerView/2;
+				for (let i = parseInt(this.showValue - scaleCountHalfView); i < parseInt(this.showValue+scaleCountHalfView); i++) {
+					let posX = (i -(this.showValue - scaleCountHalfView)) *this.step + 10; //后面的10像素为做边距，距canvas左边10像素开始画
 					ctx.moveTo(posX, _markHeight);
-					if(i%10 === 0){
+					if(i % 10 === 0){
 						ctx.lineTo(posX, _markHeight+15);
-						ctx.fillText((i+this.min), posX, _markHeight+20);
+						ctx.fillText(i, posX, _markHeight+20);
 					}else if(i%5 === 0){
 						ctx.lineTo(posX, _markHeight+10);
 					}else{
@@ -104,18 +111,27 @@
 				ctx.closePath();
 			},
 			onTouchStart(evt){
-				const that = this;
 				evt.stopPropagation();
-				that.start = 0;
-				that.end = -((this.max - this.min) * this.step);
-				that.startX = evt.changedTouches[0].x;
+				this.startX = evt.changedTouches[0].x;
 			},
 			onTouchMove(evt){
+				evt.preventDefault();
 				this.moveX = evt.changedTouches[0].x;
-				
+				let distance = this.moveX - this.startX;
+				let scaleCount = distance/this.step;
+				if(this.mainValue+scaleCount <= this.min){
+					this.showValue = this.min;
+				}else if(this.mainValue+scaleCount >= this.max){
+					this.showValue = this.max;
+				}else{
+					this.showValue = parseInt(this.mainValue+scaleCount);
+				}
+				if(this.mainValue !== this.showValue){
+					this.drawRuler();
+				}
 			},
 			onTouchEnd(evt){
-				console.log(this.moveX - this.startX);
+				this.mainValue = this.showValue;
 				this.startX = this.moveX;
 			},
 		},
@@ -127,9 +143,11 @@
 
 <style>
 	.ruler-wrap{
-		border: 1px solid #efefef;
-		box-sizing: border-box;
 		display: inline-block;
 		margin: 30rpx;
+	}
+	.cur-value{
+		text-align: center;
+		font-size: 16px;
 	}
 </style>
