@@ -149,14 +149,3 @@
 		}
 	}
 </script>
-
-<style>
-	.ruler-wrap{
-		display: inline-block;
-		margin: 30rpx;
-	}
-	.cur-value{
-		text-align: center;
-		font-size: 16px;
-	}
-</style>
