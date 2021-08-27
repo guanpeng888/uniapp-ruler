@@ -16,27 +16,31 @@
 			event: 'input'
 		},
 		props:{
-			value: {
+			value:{
 				type: Number,
 				default: 0
 			},
-			CTRLID: {
+			CTRLID:{
 				type: String,
 				default: 'rulerid'
 			},
-			rulerWidth: {
+			rulerWidth:{
 				type: Number,
 				default: 700
 			},
-			rulerHeight: {
+			rulerHeight:{
 				type: Number,
 				default: 120
 			},
-			max: {
+			orientation:{
+				type: String,
+				default: 'horizontal'		// horizontal: 水平的；vertical：垂直的
+			},
+			max:{
 				type: Number,
 				default: 999
 			},
-			min: {
+			min:{
 				type: Number,
 				default: 0
 			},
@@ -86,8 +90,11 @@
 				ctx.closePath();
 			},
 			drawRulerScale(ctx){
-				let scaleInterval = this.max - this.min;
 				let _markHeight = uni.upx2px(this.markHeight+10);
+				let scaleCountHalfView = (this.rWidth-20)/this.step/2;
+				let startX = parseInt(this.showValue - scaleCountHalfView);
+				let totalScaleCountPerView = parseInt(this.showValue + scaleCountHalfView);
+				
 				ctx.beginPath();
 				ctx.lineWidth = uni.upx2px(1);
 				ctx.strokeStyle = '#666666';
@@ -95,10 +102,8 @@
 				ctx.fontFamily = '微软雅黑';
 				ctx.textAlign = 'center';
 				ctx.textBaseline = 'top';
-				let scaleCountPerView = (this.rWidth-20)/this.step;
-				let scaleCountHalfView = scaleCountPerView/2;
-				for (let i = parseInt(this.showValue - scaleCountHalfView); i < parseInt(this.showValue+scaleCountHalfView); i++) {
-					let posX = (i -(this.showValue - scaleCountHalfView)) *this.step + 10; //后面的10像素为做边距，距canvas左边10像素开始画
+				for (let i = startX; i < totalScaleCountPerView; i++) {
+					let posX = (i - startX) * this.step + 10; //后面的10像素为做边距，距canvas左边10像素开始画
 					ctx.moveTo(posX, _markHeight);
 					if(i % 10 === 0){
 						ctx.lineTo(posX, _markHeight+15);
