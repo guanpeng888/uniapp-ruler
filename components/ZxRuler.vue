@@ -45,6 +45,11 @@
 				type: Number,
 				default: 0
 			},
+			// 标尺显示比例
+			ratio:{
+				type: Number,
+				default: 1
+			},
 			markHeight:{
 				type: Number,
 				default: 16
@@ -132,12 +137,13 @@
 				this.moveX = evt.changedTouches[0].x;
 				let distance = this.startX - this.moveX;
 				let scaleCount = distance/this.stepInterval;
-				if(this.value+scaleCount <= this.min){
+				let curRulerValue = this.value+scaleCount;
+				if(curRulerValue <= this.min){
 					this.showValue = this.min;
-				}else if(this.value+scaleCount >= this.max){
+				}else if(curRulerValue >= this.max){
 					this.showValue = this.max;
 				}else{
-					this.showValue = parseInt(this.value+scaleCount);
+					this.showValue = parseInt(curRulerValue);
 				}
 				if(this.value !== this.showValue){
 					this.drawRuler();
@@ -150,7 +156,7 @@
 				this.$emit('input', newValue);
 				this.startX = this.moveX;
 				evt.preventDefault();
-			},
+			}
 		},
 		created() {
 			this.initCtrl();
