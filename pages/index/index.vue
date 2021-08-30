@@ -15,7 +15,7 @@
 		 CTRLID="heightRuler"
 		 :min="100"
 		 :max="230"
-		 :ratio="0.1"
+		 orientation="horizontal"
 		 v-model="mainValue"
 		 @onScrollChange="getRulerValue"></ZxRuler>
 	</view>
