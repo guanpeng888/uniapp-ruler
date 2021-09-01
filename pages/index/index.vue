@@ -1,33 +1,43 @@
 <template>
 	<view class="ruler-wrap">
 		<!-- 日期选择 -->
-<!-- 		<calendar-select 
-		v-model="showCalendar"
-		:addOrRemoveData="addOrRemoveData"
+		<DateOfMenstrualPeriod 
 		mode="range"
-		:altPrice="dataPrice"
-		@change="changeDate"></calendar-select> -->
+		:value="ovulatoryPeriod"
+		@change="changeDate"></DateOfMenstrualPeriod>
 		
 		
 		
 		<view class="cur-value">肉类卡路里：{{foodkg}} -- {{kcal}}</view>
 		<ZxRuler
 		 CTRLID="heightRuler"
-		 :min="100"
+		 :min="20"
 		 :max="230"
+		 :rulerWidth="600"
+		 :rulerHeight="120"
 		 orientation="horizontal"
 		 v-model="mainValue"
 		 @onScrollChange="getRulerValue"></ZxRuler>
+		 
+		 <ZxRuler
+		  CTRLID="weightRuler"
+		  :min="20"
+		  :max="230"
+		  :rulerWidth="120"
+		  :rulerHeight="480"
+		  orientation="vertical"
+		  v-model="mainValue"
+		  @onScrollChange="getRulerValue"></ZxRuler>
 	</view>
 </template>
 
 <script>
-	import calendarSelect from '../../components/calendar-select/calendar-select.vue'
+	import DateOfMenstrualPeriod from '../../components/DateOfMenstrualPeriod.vue'
 	import ZxRuler from '../../components/ZxRuler.vue'
 	export default {
 		components:{
 			ZxRuler,
-			calendarSelect
+			DateOfMenstrualPeriod
 		},
 		data() {
 			return {
@@ -46,8 +56,8 @@
 						price: 98
 					}
 				],
-				addOrRemoveData: ['2021-08-23', '2021-08-27'],
-				mainValue: 162,
+				ovulatoryPeriod: {},
+				mainValue: 100,
 				kcal: 0,
 				foodkg: 0
 			}

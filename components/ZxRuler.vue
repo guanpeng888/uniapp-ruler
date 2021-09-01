@@ -2,7 +2,7 @@
 	<view class="ruler-wrap">
 		<!-- 水平尺 -->
 		<HorizontalRuler
-		v-if="isShowHorizontalRuler"
+		v-if="orientation === 'horizontal'"
 		:CTRLID="CTRLID"
 		:min="min"
 		:max="max"
@@ -16,7 +16,7 @@
 		
 		<!-- 竖直尺 -->
 		<VerticalRuler
-		v-else
+		v-if="orientation === 'vertical'"
 		:CTRLID="CTRLID"
 		:min="min"
 		:max="max"
@@ -96,6 +96,7 @@
 		},
 		computed:{
 			isShowHorizontalRuler(){
+				console.log('this.orientation:::::', this.orientation, this.orientation === 'horizontal')
 				return this.orientation === 'horizontal';
 			}
 		},
